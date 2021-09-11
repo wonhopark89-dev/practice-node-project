@@ -2,7 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import {User} from './models/User';
 import bodyParser from 'body-parser';
-// const express = require('express');
+import {mongoURI} from './config/key';
+
 const app = express();
 const port = 4000;
 
@@ -11,11 +12,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 // application/json
 app.use(bodyParser.json());
 
-const MONGODB_USER_URL =
-  'mongodb+srv://wonhopark:dnjsghxptmxm1!@practice-node.b3nrq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
-
 // https://mongoosejs.com/docs/migrating_to_6.html#no-more-deprecation-warning-options
-const dbConnection = mongoose.connect(MONGODB_USER_URL);
+const dbConnection = mongoose.connect(mongoURI);
 dbConnection.then(() => console.log('MongoDB Connected...')).catch((err) => console.log(err));
 
 app.get('/', (req, res) => {

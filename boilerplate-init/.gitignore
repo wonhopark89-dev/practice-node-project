@@ -289,3 +289,7 @@ modules.xml
 # .pnp.*
 
 # End of https://www.toptal.com/developers/gitignore/api/yarn,node,react,webstorm+all,visualstudiocode,macos
+
+# config for dev and prod
+
+/src/config/
