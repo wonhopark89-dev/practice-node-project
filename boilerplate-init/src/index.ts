@@ -4,6 +4,7 @@ import {User} from './models/User';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import {mongoURI} from './config/key';
+import {auth} from './middleware/auth';
 
 const app = express();
 const port = 4000;
@@ -22,7 +23,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.post('/register', (req, res) => {
+app.post('api/users/register', (req, res) => {
   const user = new User(req.body);
   user.save((err, userInfo) => {
     if (err) {
@@ -34,7 +35,7 @@ app.post('/register', (req, res) => {
   });
 });
 
-app.post('/login', (req, res) => {
+app.post('api/users/login', (req, res) => {
   console.log(req.body);
   // 요청된 이메일을 데이터베이스에서 있는지 찾는다
 
@@ -68,6 +69,31 @@ app.post('/login', (req, res) => {
         // 쿠키
         res.cookie('x_auth', user.token).status(200).json({loginSuccess: true, userId: user._id});
       });
+    });
+  });
+});
+
+// middleware
+app.get('/api/users/auth', auth, (req, res) => {
+  // 미들웨어 authentication 이 true
+  res.status(200).json({
+    _id: req.user._id,
+    isAdmin: req.user.role === 0 ? false : true,
+    isAuth: true,
+    email: req.user.email,
+    name: req.user.name,
+    role: req.user.role,
+    image: req.user.iamge,
+  });
+});
+
+app.get('/api/users/logout', auth, (req, res) => {
+  User.findOneAndUpdate({_id: req.user._id}, {token: ''}, (err, user) => {
+    if (err) {
+      return res.json({success: false, err});
+    }
+    return res.status(200).send({
+      success: true,
     });
   });
 });
