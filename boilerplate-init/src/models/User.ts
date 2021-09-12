@@ -1,7 +1,21 @@
 import mongoose, {Schema} from 'mongoose';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const saltRounds = 10; // 10자리 salt
+
+// todo : Improve
+// interface UserProps {
+//   name: string;
+//   email: string;
+//   password: string;
+//   role: number;
+//   image: string;
+//   token: string;
+//   tokenExp: number;
+// }
+//
+// export interface UserModelProps extends UserProps, Document {}
 
 // https://mongoosejs.com/docs/guide.html#definition
 const userSchema = new Schema({
@@ -58,6 +72,40 @@ userSchema.pre('save', function (next) {
     next();
   }
 });
+
+// 패스워드 비교하는 함수 추가
+userSchema.methods.comparePassword = function (plainPassword, cb) {
+  // cb = callback
+  // plainPassword 123456, 암호화된 비밀번호 !Q@W#E~~
+  // let user = this;
+  bcrypt.compare(plainPassword, this.password, (err, isMatch) => {
+    if (err) {
+      return cb(err);
+    }
+    cb(null, isMatch);
+  });
+};
+
+// todo : 패스워드 비교하는 함수 수정
+// userSchema.methods.comparePassword = async function (plainPassword: string) {
+//   const result = await bcrypt.compare(plainPassword, this.password);
+//   return result;
+// };
+
+userSchema.methods.generateToken = function (cb) {
+  let user = this;
+  // jsonwebtoken 이용해서 token 생성
+  // 'tomato' 자리에 들어가는 값을 알아야 사용자 식별이 가능하다.
+  const token = jwt.sign(user._id.toHexString(), 'tomoto');
+  // user._id + 'tomato' = token
+  user.token = token;
+  user.save((err, user) => {
+    if (err) {
+      return cb(err);
+    }
+    cb(null, user);
+  });
+};
 
 // https://mongoosejs.com/docs/guide.html#models
 const User = mongoose.model('User', userSchema);
