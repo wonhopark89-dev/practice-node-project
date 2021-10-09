@@ -1,13 +1,13 @@
 import {Request, Response, NextFunction} from 'express';
 import {User} from '../models/User';
+import {IAuthRequest} from '../interfaces/authRequest';
 
-const auth = (req: Request, res: Response, next: NextFunction) => {
+const auth = (req: IAuthRequest, res: Response, next: NextFunction) => {
   // 인증처리
   //  클라이언트 쿠키에서 토큰을 가져온다.
-  let token = req.cookie.x_auth; // 쿠키를 저장한 이름
+  let token = req.cookies?.x_auth; // 쿠키를 저장한 이름
 
   // 토큰을 복호화해서 유저를 찾는다, decode token with jwt
-
   User.findByToken(token, (err, user) => {
     if (err) {
       throw err;

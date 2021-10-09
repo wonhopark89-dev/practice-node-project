@@ -72,7 +72,7 @@ userSchema.methods.generateToken = function (callback: (error: Error | null, tok
   // jsonwebtoken 이용해서 token 생성
   // 'tomato' 자리에 들어가는 값을 알아야 사용자 식별이 가능하다.
   // user._id + 'tomato' = token
-  user.token = jwt.sign(user._id.toHexString(), 'tomoto');
+  user.token = jwt.sign(user._id.toHexString(), 'tomato');
   user.save((err, user) => {
     if (err) {
       return callback(err, null);
@@ -84,7 +84,6 @@ userSchema.methods.generateToken = function (callback: (error: Error | null, tok
 userSchema.statics.findByToken = function (token: string, callback: (error: Error | null, user: IUser | null) => void) {
   let user = this;
 
-  user._id = token;
   jwt.verify(token, 'tomato', (err, decoded) => {
     user.findOne({_id: decoded, token: token}, (_err, _user) => {
       if (_err) {

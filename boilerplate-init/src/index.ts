@@ -7,6 +7,7 @@ import {mongoURI} from './config/key';
 import {auth} from './middleware/auth';
 import IUser from './interfaces/user';
 import {userInfo} from 'os';
+import {IAuthRequest} from './interfaces/authRequest';
 
 const app = express();
 const port = 4000;
@@ -75,7 +76,7 @@ app.post('/api/users/login', (req, res) => {
 });
 
 // middleware;
-app.get('/api/users/auth', auth, (req, res) => {
+app.get('/api/users/auth', auth, (req: IAuthRequest, res) => {
   // 미들웨어 authentication 이 true
   res.status(200).json({
     _id: req.user._id,
@@ -88,16 +89,17 @@ app.get('/api/users/auth', auth, (req, res) => {
   });
 });
 
-// app.get('/api/users/logout', auth, (req, res) => {
-//   User.findOneAndUpdate({_id: req.user._id}, {token: ''}, (err, user) => {
-//     if (err) {
-//       return res.json({success: false, err});
-//     }
-//     return res.status(200).send({
-//       success: true,
-//     });
-//   });
-// });
+app.get('/api/users/logout', auth, (req: IAuthRequest, res) => {
+  User.findOneAndUpdate({_id: req.user._id}, {token: ''}, {}, (err, user) => {
+    if (err) {
+      console.log(JSON.stringify(err));
+      return res.json({success: false, err});
+    }
+    return res.status(200).send({
+      success: true,
+    });
+  });
+});
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
