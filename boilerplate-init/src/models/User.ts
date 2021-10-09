@@ -80,27 +80,20 @@ userSchema.methods.generateToken = function (callback: (error: Error | null, tok
   });
 };
 
-// userSchema.statics.findByToken = function (token, cb) {
-//   let user = this;
-//   // 토큰을 decode
-//   jwt.verify(token, 'tomato', function (err, decoded) {
-//     // 유저 아이디를 이용해서 유저를 찾은 다음에
-//     // 클라이언트에서 가져온 token 과 db 에 보관된 토큰이 일치하는지 확인
-//     user.findOne({_id: decoded, token: token}, function (err, user) {
-//       if (err) {
-//         return cb(err);
-//       }
-//       cb(null, user);
-//     });
-//   });
-// };
-
-// userSchema.statics.findByToken = function (token: string, cb: (error: Error, user: IUserDocument) => void) {
-//   let user = this;
-//   return jwt.verify(token, 'tomato', (err, decoded) => {
-//     return user.findOne({_id: decoded, token: token}, (_error, _user) => cb(_error, _user));
-//   });
-// };
+userSchema.statics.findByToken = function (token, cb) {
+  let user = this;
+  // 토큰을 decode
+  jwt.verify(token, 'tomato', function (err, decoded) {
+    // 유저 아이디를 이용해서 유저를 찾은 다음에
+    // 클라이언트에서 가져온 token 과 db 에 보관된 토큰이 일치하는지 확인
+    user.findOne({_id: decoded, token: token}, function (err, user) {
+      if (err) {
+        return cb(err);
+      }
+      cb(null, user);
+    });
+  });
+};
 
 // https://mongoosejs.com/docs/guide.html#models
 const User = mongoose.model<IUser>('User', userSchema);

@@ -4,7 +4,7 @@ import {User} from './models/User';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import {mongoURI} from './config/key';
-// import {auth} from './middleware/auth';
+import {auth} from './middleware/auth';
 import IUser from './interfaces/user';
 
 const app = express();
@@ -37,7 +37,6 @@ app.post('/api/users/register', (req, res) => {
 });
 
 app.post('/api/users/login', (req, res) => {
-  console.log(req.body);
   // 요청된 이메일을 데이터베이스에서 있는지 찾는다
 
   /**
@@ -56,7 +55,6 @@ app.post('/api/users/login', (req, res) => {
 
     // 요청된 이메일이 데이터베이스에 있다면 비밀번호가 맞는지 확인
     user.comparePassword(req.body.password, (err, isMatch) => {
-      console.log(`isMatch: ` + isMatch);
       // isMatch 가 callback 에 없는걸로 체크
       if (!isMatch) {
         return res.json({loginSuccess: false, message: '비밀번호가 틀렸습니다.'});
@@ -68,26 +66,26 @@ app.post('/api/users/login', (req, res) => {
           return res.status(400).send(err);
         }
         // 토큰을 저장한다. 어디에 ?!  쿠키, 로컬스토리지, 세션 등 각 장단점이 있다.
-        // 쿠키
+        // 쿠키, x_auth 라는 이름으로 쿠키에 저장
         res.cookie('x_auth', user.token).status(200).json({loginSuccess: true, userId: user._id});
       });
     });
   });
 });
 
-// middleware
-// app.get('/api/users/auth', auth, (req, res) => {
-//   // 미들웨어 authentication 이 true
-//   res.status(200).json({
-//     _id: req.user._id,
-//     isAdmin: req.user.role === 0 ? false : true,
-//     isAuth: true,
-//     email: req.user.email,
-//     name: req.user.name,
-//     role: req.user.role,
-//     image: req.user.iamge,
-//   });
-// });
+// middleware;
+app.get('/api/users/auth', auth, (req, res) => {
+  // 미들웨어 authentication 이 true
+  res.status(200).json({
+    _id: req.user._id,
+    isAdmin: req.user.role === 0 ? false : true,
+    isAuth: true,
+    email: req.user.email,
+    name: req.user.name,
+    role: req.user.role,
+    image: req.user.iamge,
+  });
+});
 
 // app.get('/api/users/logout', auth, (req, res) => {
 //   User.findOneAndUpdate({_id: req.user._id}, {token: ''}, (err, user) => {
