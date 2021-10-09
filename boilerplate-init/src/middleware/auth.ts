@@ -7,7 +7,6 @@ const auth = (req: Request, res: Response, next: NextFunction) => {
   let token = req.cookie.x_auth; // 쿠키를 저장한 이름
 
   // 토큰을 복호화해서 유저를 찾는다, decode token with jwt
-  User.findByToken(token, (cb) => {});
 
   User.findByToken(token, (err, user) => {
     if (err) {

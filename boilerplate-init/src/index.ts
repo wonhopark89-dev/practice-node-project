@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import {mongoURI} from './config/key';
 import {auth} from './middleware/auth';
 import IUser from './interfaces/user';
+import {userInfo} from 'os';
 
 const app = express();
 const port = 4000;
@@ -78,12 +79,12 @@ app.get('/api/users/auth', auth, (req, res) => {
   // 미들웨어 authentication 이 true
   res.status(200).json({
     _id: req.user._id,
-    isAdmin: req.user.role === 0 ? false : true,
+    isAdmin: req.user.role !== 0,
     isAuth: true,
     email: req.user.email,
     name: req.user.name,
     role: req.user.role,
-    image: req.user.iamge,
+    image: req.user.image,
   });
 });
 

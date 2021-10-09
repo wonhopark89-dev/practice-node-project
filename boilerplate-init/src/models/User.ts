@@ -3,10 +3,11 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import IUser from '../interfaces/user';
 
-// interface IUserModel extends Model<IUser> {
-//   // mongoose statics
-//   findByToken: (token: string) => IUser;
-// }
+interface IUserModel extends Model<IUser> {
+  // mongoose statics
+  _id: string;
+  findByToken: (token: string, callback: (error: Error | null, user: IUser | null) => void) => void;
+}
 
 const saltRounds = 10; // 10자리 salt
 // https://mongoosejs.com/docs/guide.html#definition
@@ -80,22 +81,36 @@ userSchema.methods.generateToken = function (callback: (error: Error | null, tok
   });
 };
 
-userSchema.statics.findByToken = function (token, cb) {
+userSchema.statics.findByToken = function (token: string, callback: (error: Error | null, user: IUser | null) => void) {
   let user = this;
-  // 토큰을 decode
-  jwt.verify(token, 'tomato', function (err, decoded) {
-    // 유저 아이디를 이용해서 유저를 찾은 다음에
-    // 클라이언트에서 가져온 token 과 db 에 보관된 토큰이 일치하는지 확인
-    user.findOne({_id: decoded, token: token}, function (err, user) {
-      if (err) {
-        return cb(err);
+
+  user._id = token;
+  jwt.verify(token, 'tomato', (err, decoded) => {
+    user.findOne({_id: decoded, token: token}, (_err, _user) => {
+      if (_err) {
+        return callback(_err, null);
       }
-      cb(null, user);
+      callback(null, _user);
     });
   });
 };
 
+// userSchema.statics.findByToken = function (token, cb) {
+//   let user = this;
+//   // 토큰을 decode
+//   jwt.verify(token, 'tomato', function (err, decoded) {
+//     // 유저 아이디를 이용해서 유저를 찾은 다음에
+//     // 클라이언트에서 가져온 token 과 db 에 보관된 토큰이 일치하는지 확인
+//     user.findOne({_id: decoded, token: token}, function (err, user) {
+//       if (err) {
+//         return cb(err);
+//       }
+//       cb(null, user);
+//     });
+//   });
+// };
+
 // https://mongoosejs.com/docs/guide.html#models
-const User = mongoose.model<IUser>('User', userSchema);
+const User = mongoose.model<IUser, IUserModel>('User', userSchema);
 
 export {User};
