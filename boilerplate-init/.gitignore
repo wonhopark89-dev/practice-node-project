@@ -292,4 +292,4 @@ modules.xml
 
 # config for dev and prod
 
-/src/config/
+/server/config/

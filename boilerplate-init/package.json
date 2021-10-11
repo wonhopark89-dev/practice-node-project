@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc",
     "start": "yarn dev && node ./bin/index.js",
-    "dev": "nodemon --watch '*.ts' --exec 'ts-node' ./src/index.ts"
+    "dev": "nodemon --watch '*.ts' --exec 'ts-node' server/index.ts"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
