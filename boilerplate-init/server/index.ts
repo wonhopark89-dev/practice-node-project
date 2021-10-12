@@ -26,6 +26,11 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+// CORS ( Cross-Origin-Resource-Sharing ) Test
+app.get('/api/hello', (req, res) => {
+  res.send('Hello CORS dev');
+});
+
 app.post('/api/users/register', (req, res) => {
   const user = new User(req.body);
   user.save((err, userInfo) => {
