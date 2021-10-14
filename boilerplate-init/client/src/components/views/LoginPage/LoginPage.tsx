@@ -1,6 +1,10 @@
 import React, {useState} from 'react';
+import {Axios} from 'axios';
+import {useDispatch} from 'react-redux';
+import {loginUser} from '../../../_actions/user_action';
 
 const LoginPage = () => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
@@ -12,6 +16,20 @@ const LoginPage = () => {
   };
   const onSubmitHandler = (event: React.FormEvent<HTMLButtonElement>) => {
     event.preventDefault(); // prevent refresh
+
+    let body = {
+      email: email,
+      password: password,
+    };
+
+    dispatch(loginUser(body)).then((response) => {
+      if (response.payload.loginSuccess) {
+      }
+    });
+
+    Axios.post('/api/users/login', body).then((response) => {
+      console.log(response);
+    });
   };
 
   return (
