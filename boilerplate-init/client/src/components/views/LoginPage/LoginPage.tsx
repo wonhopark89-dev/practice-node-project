@@ -23,6 +23,7 @@ const LoginPage = ({history}: RouteComponentProps) => {
     };
 
     dispatch(loginUser(body)).then((response: any) => {
+      console.log('?');
       if (response.payload.loginSuccess) {
         history.push('/');
       } else {

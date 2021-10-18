@@ -1,7 +1,7 @@
 import {LOGIN_USER, REGISTER_USER} from '../_actions/types';
 
 export default function (state = {}, action: any) {
-  console.log(action);
+  // console.log(action);
   switch (action.type) {
     case LOGIN_USER:
       return {...state, loginSuccess: action.payload};

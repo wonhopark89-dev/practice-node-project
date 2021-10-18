@@ -2,6 +2,8 @@ import axios from 'axios';
 import {LOGIN_USER, REGISTER_USER} from './types';
 
 export function loginUser(dataToSubmit: any) {
+  console.log('hello');
+  console.log(dataToSubmit);
   const request = axios.post('/api/users/login', dataToSubmit).then((response) => response.data);
 
   return {

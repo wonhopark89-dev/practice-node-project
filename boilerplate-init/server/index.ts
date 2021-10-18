@@ -45,7 +45,7 @@ app.post('/api/users/register', (req, res) => {
 
 app.post('/api/users/login', (req, res) => {
   // 요청된 이메일을 데이터베이스에서 있는지 찾는다
-
+  console.log(req);
   /**
    * fixme : email 값은 변수 그대로 할당하면 any 때문에 mongo db 에서 제대로 string 이라고 인식하지 못함
    * req.body.email => any, `${req.body.email}` => string
